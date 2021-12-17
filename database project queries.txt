@@ -1,0 +1,58 @@
+Q1>
+1>
+SELECT COUNT(tweet_id)
+FROM Tweets;
+
+2>
+SELECT COUNT(Tweets.tweet_id) AS Total_Tweets_Per_Language,Users.user_lang
+FROM ((Tweet_User
+INNER JOIN Users ON Tweet_User.user_id=Users.user_id)
+INNER JOIN Tweets ON Tweets.tweet_id=Tweet_User.tweet_id)
+GROUP BY user_lang;
+
+3>
+SELECT Users.user_lang,
+CAST(COUNT(Tweets.tweet_id)as float)/ CAST((SELECT COUNT(tweet_id) FROM Tweets)as float)
+AS Fraction_Of_Total_Tweets
+FROM ((Tweet_User
+INNER JOIN Users ON Tweet_User.user_id=Users.user_id)
+INNER JOIN Tweets ON Tweets.tweet_id=Tweet_User.tweet_id)
+GROUP BY user_lang;
+
+Q2>
+1>
+SELECT CAST((SELECT COUNT(tweet_id) FROM Retweet) AS FLOAT)/CAST((SELECT COUNT(tweet_id) FROM Tweets) AS FLOAT)
+AS FRACTION;
+
+2>
+SELECT CAST( AVG(retweet_count)  AS NUMERIC(10,2)) as Average
+FROM Tweets;
+
+3>
+SELECT CAST((SELECT COUNT(tweet_id) FROM Tweets WHERE retweet_count=0) AS FLOAT)/CAST((SELECT COUNT(tweet_id) FROM Tweets) AS FLOAT)
+AS FRACTIONS_NEVER_TWEETED;
+
+4>
+
+SELECT (CAST((SELECT COUNT(tweet_id) FROM Tweets where retweet_count <CAST((SELECT AVG(retweet_count) from Tweets as float)as float))as float)
+/CAST((SELECT COUNT(tweet_id) FROM Tweets)as float))
+AS retweeted_fewer_times;
+
+
+
+Q3>
+1>
+SELECT COUNT(DISTINCT Hashtags.hashtag)  from Hashtags;
+
+2>
+SELECT DISTINCT hashtag as DISTINCT_HASHTAG ,COUNT(hashtag) AS TOTAL_COUNT
+FROM Hashtags
+GROUP BY hashtag
+ORDER BY COUNT(hashtag) DESC LIMIT 10 ;
+
+3>
+
+Q4>
+1>
+SELECT(CAST((SELECT COUNT(tweet_id) FROM Tweets)as float)-CAST((SELECT COUNT(tweet_id) FROM Reply)as float)) AS No_Reply;
+
